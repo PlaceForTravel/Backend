@@ -15,7 +15,7 @@ import java.io.IOException;
 public class S3Service {
     private final AmazonS3 amazonS3;
 
-    @Value("{cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public S3Service(AmazonS3 amazonS3) {
