@@ -18,6 +18,12 @@ public class User {
     private String email;
     @Column(name = "PHONE_NUM")
     private String phoneNum;
+    @Column(name = "FCMTOKEN")
+    private String fcmToken;
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
 
     @OneToMany(mappedBy = "user")
     private List<Board> boardList = new ArrayList<>();
@@ -66,5 +72,7 @@ public class User {
     public List<Comment> getCommentList() {
         return commentList;
     }
+
+
 }
 
