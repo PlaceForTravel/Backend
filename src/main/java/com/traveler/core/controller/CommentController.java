@@ -19,16 +19,11 @@ import java.util.Optional;
 
 @RestController
 public class CommentController {
-    private final CommentRepository commentRepository;
     private final CommentService commentService;
-    private final BoardRepository boardRepository;
-    private final FCMNotificationService fcmNotificationService;
 
-    public CommentController(CommentRepository commentRepository, CommentService commentService, BoardRepository boardRepository, FCMNotificationService fcmNotificationService) {
-        this.commentRepository = commentRepository;
+    public CommentController( CommentService commentService) {
         this.commentService = commentService;
-        this.boardRepository = boardRepository;
-        this.fcmNotificationService = fcmNotificationService;
+
     }
 
     @GetMapping(value = "/board/{boardId}/comment")
@@ -39,16 +34,7 @@ public class CommentController {
     @PostMapping(value = "/board/{boardId}/comment/save")
     public void saveComment(@PathVariable int boardId, @RequestBody CommentRequestDTO commentRequestDTO){
         commentService.saveComment(boardId, commentRequestDTO);
-        Optional<Board> board = boardRepository.findById(boardId);
-        Map<String,String > data = new HashMap<String,String>();
-        data.put("boardId",Integer.toString(boardId));
-        FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
-                .body(commentRequestDTO.getUserId()+ "님이 당신의 게시물에 댓글을 달았습니다.")
-                .title("댓글")
-                .userId(board.get().getUser().getUserId())
-                .data(data)
-                .build();
-        fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);
+        commentService.commentNoti(boardId, commentRequestDTO);
     }
     @DeleteMapping(value = "/board/comment/delete/{commentId}")
     public void deleteComment(@PathVariable int commentId){

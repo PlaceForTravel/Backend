@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.traveler.core.entity.BoardPlace;
 import com.traveler.core.entity.Image;
 import com.traveler.core.entity.Place;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PlaceRequestDTO {
@@ -14,21 +17,22 @@ public class PlaceRequestDTO {
     private String address;
     private int imgIndex;
     private int boardPlaceid;
+    private MultipartFile multipartFile;
+
+
     public String getPlaceName(){
         return placeName;
     }
-    public int getImgIndex(){
-        return imgIndex;
-    }
+
     public PlaceRequestDTO(){}
 
 
-    public PlaceRequestDTO(String placeName, float latitude, float longitude, String address, int imgIndex) {
+    public PlaceRequestDTO(String placeName, float latitude, float longitude, String address) {
         this.placeName = placeName;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
-        this.imgIndex = imgIndex;
+
     }
 
     public Place toPlaceEntity(){
@@ -39,4 +43,7 @@ public class PlaceRequestDTO {
         return Image.builder().fileName(imgUrl).boardPlace(boardPlace).build();
     }
 
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
 }

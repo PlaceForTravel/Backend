@@ -12,8 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BoardService {
@@ -22,14 +21,14 @@ public class BoardService {
     private final BoardPlaceRepository boardPlaceRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     private final SavedBoardRepository savedBoardRepository;
     private final SavedBoardPlaceRepository savedBoardPlaceRepository;
-
+    private final FCMNotificationService fcmNotificationService;
     private final S3Service s3Service;
 
-    public BoardService(BoardRepository boardRepository, PlaceRepository placeRepository, BoardPlaceRepository boardPlaceRepository, ImageRepository imageRepository, UserRepository userRepository, UserServiceImpl userService, SavedBoardRepository savedBoardRepository, SavedBoardPlaceRepository savedBoardPlaceRepository, S3Service s3Service) {
+    public BoardService(BoardRepository boardRepository, PlaceRepository placeRepository, BoardPlaceRepository boardPlaceRepository, ImageRepository imageRepository, UserRepository userRepository, UserService userService, SavedBoardRepository savedBoardRepository, SavedBoardPlaceRepository savedBoardPlaceRepository, FCMNotificationService fcmNotificationService, S3Service s3Service) {
         this.boardRepository = boardRepository;
         this.placeRepository = placeRepository;
         this.boardPlaceRepository = boardPlaceRepository;
@@ -38,6 +37,7 @@ public class BoardService {
         this.userService = userService;
         this.savedBoardRepository = savedBoardRepository;
         this.savedBoardPlaceRepository = savedBoardPlaceRepository;
+        this.fcmNotificationService = fcmNotificationService;
 
         this.s3Service = s3Service;
     }
@@ -74,11 +74,11 @@ public class BoardService {
         return boardPlaceListResponseDTOs;
     }
 
-    public void save(BoardSaveDTO boardSaveDTO,List<MultipartFile> multipartFiles){
+    public void save(BoardSaveDTO boardSaveDTO){
         User user = userRepository.findById(boardSaveDTO.getUserId()).orElse(null);
         Board board = boardSaveDTO.toBoardEntity(user);
         List<PlaceRequestDTO> places = boardSaveDTO.getPlaces();
-        List<BoardPlace> boardPlaces = new ArrayList<>();
+        List<BoardPlace> boardPlaces = new ArrayList<BoardPlace>();
         boardRepository.save(board);
 
         places.forEach(place -> {
@@ -88,9 +88,8 @@ public class BoardService {
             boardPlaceRepository.save(boardPlace);
             boardPlaces.add(boardPlace);
             String fileName = board.getBoardId()+"_"+placeEntity.getPlaceId()+"_"+board.getRegDate().toLocalDate().toString();
-            int imgIndex = place.getImgIndex();
             try {
-                String imgUrl = s3Service.upload(multipartFiles.get(imgIndex),fileName);
+                String imgUrl = s3Service.upload(place.getMultipartFile(),fileName);
                 Image img = place.toImageEntity(imgUrl,boardPlace);
                 imageRepository.save(img);
                 boardPlace.setImage(img);
@@ -141,4 +140,25 @@ public class BoardService {
         savedBoardPlaceRepository.save(savedBoardPlace);
     }
 
+    public BoardDetailResponseDTO showBoardDetail(int boardId){
+        Board board = boardRepository.findById(boardId).orElse(null);
+        List<BoardPlace> boardPlace = boardPlaceRepository.findBoardPlacesByBoardBoardId(boardId);
+        if(board !=null && boardPlace != null){
+            BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, boardPlace);
+            return boardDetailResponseDTO;
+        } else return null;
+    }
+
+    public void likeNoti(int boardId, UserDTO userDTO){
+        Optional<Board> board = boardRepository.findById(boardId);
+        Map<String,String > data = new HashMap<String,String>();
+        data.put("boardId",Integer.toString(boardId));
+        FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
+                .body(userDTO.getUserId()+ "님이 당신의 게시물을 좋아요 눌렀습니다.")
+                .title("좋아요")
+                .userId(board.get().getUser().getUserId())
+                .data(data)
+                .build();
+        fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);
+    }
 }

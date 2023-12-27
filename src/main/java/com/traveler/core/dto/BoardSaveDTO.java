@@ -1,6 +1,7 @@
 package com.traveler.core.dto;
 
 import com.traveler.core.entity.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class BoardSaveDTO {
     private List<PlaceRequestDTO> places;
     private String userId;
     private String nickname;
+
 
     public String getContent() {
         return content;

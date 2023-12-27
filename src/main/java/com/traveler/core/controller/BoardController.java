@@ -9,7 +9,7 @@ import com.traveler.core.repository.BoardPlaceRepository;
 import com.traveler.core.repository.BoardRepository;
 import com.traveler.core.service.BoardService;
 import com.traveler.core.service.FCMNotificationService;
-import com.traveler.core.service.UserServiceImpl;
+import com.traveler.core.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,18 +24,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/board")
 public class BoardController {
-    private final BoardRepository boardRepository;
-    private final BoardPlaceRepository boardPlaceRepository;
     private final BoardService boardService;
-    private final UserServiceImpl userService;
-    private final FCMNotificationService fcmNotificationService;
 
-    public BoardController(BoardRepository boardRepository, BoardPlaceRepository boardPlaceRepository, BoardService boardService, UserServiceImpl userService, FCMNotificationService fcmNotificationService) {
-        this.boardRepository = boardRepository;
-        this.boardPlaceRepository = boardPlaceRepository;
+
+
+    public BoardController( BoardService boardService) {
         this.boardService = boardService;
-        this.userService = userService;
-        this.fcmNotificationService = fcmNotificationService;
     }
 
     @GetMapping(value = "/list")
@@ -56,18 +50,15 @@ public class BoardController {
         Page<BoardPlaceListResponseDTO> placeListResponseDTOs = boardService.boardPlacePaging(pageable,placeName);
         return placeListResponseDTOs;
     }
+
     @GetMapping(value = "/detail/{boardId}")
     public BoardDetailResponseDTO boardDetail(@PathVariable int boardId){
-        Board board = boardRepository.findById(boardId).orElse(null);
-        List<BoardPlace> boardPlace = boardPlaceRepository.findBoardPlacesByBoardBoardId(boardId);
-        if(board !=null && boardPlace != null){
-            BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, boardPlace);
-        return boardDetailResponseDTO;} else return null;
-
+        BoardDetailResponseDTO boardDetailResponseDTO = boardService.showBoardDetail(boardId);
+        return boardDetailResponseDTO;
     }
     @PostMapping(value = "/save")
-    public void saveBoard(@RequestPart("board") BoardSaveDTO boardSaveDTO, @RequestPart("images")List<MultipartFile> multipartFiles){
-        boardService.save(boardSaveDTO, multipartFiles);
+    public void saveBoard(@RequestBody BoardSaveDTO boardSaveDTO){
+        boardService.save(boardSaveDTO);
     }
     @DeleteMapping(value = "/delete/{boardId}")
     public void deleteBoard(@PathVariable int boardId){
@@ -76,16 +67,7 @@ public class BoardController {
     @PostMapping(value = "/like/{boardId}")
     public void like(@PathVariable int boardId, @RequestBody UserDTO userDTO){
         boardService.like(boardId, userDTO.getUserId());
-        Optional<Board> board = boardRepository.findById(boardId);
-        Map<String,String > data = new HashMap<String,String>();
-        data.put("boardId",Integer.toString(boardId));
-        FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
-                .body(userDTO.getUserId()+ "님이 당신의 게시물을 좋아요 눌렀습니다.")
-                .title("좋아요")
-                .userId(board.get().getUser().getUserId())
-                .data(data)
-                .build();
-        fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);
+        boardService.likeNoti(boardId, userDTO);
     }
     @PostMapping(value = "/saveBoardPlace/{boardPlaceId}")
     public void likeBoardPlace(@PathVariable int boardPlaceId, @RequestBody UserDTO userDTO){
