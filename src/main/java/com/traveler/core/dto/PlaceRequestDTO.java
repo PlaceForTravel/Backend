@@ -17,7 +17,7 @@ public class PlaceRequestDTO {
     private String address;
     private int imgIndex;
     private int boardPlaceid;
-    private MultipartFile multipartFile;
+
 
 
     public String getPlaceName(){
@@ -43,7 +43,8 @@ public class PlaceRequestDTO {
         return Image.builder().fileName(imgUrl).boardPlace(boardPlace).build();
     }
 
-    public MultipartFile getMultipartFile() {
-        return multipartFile;
+
+    public int getImgIndex() {
+        return imgIndex;
     }
 }

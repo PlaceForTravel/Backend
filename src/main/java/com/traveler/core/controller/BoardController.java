@@ -57,8 +57,8 @@ public class BoardController {
         return boardDetailResponseDTO;
     }
     @PostMapping(value = "/save")
-    public void saveBoard(@RequestBody BoardSaveDTO boardSaveDTO){
-        boardService.save(boardSaveDTO);
+    public void saveBoard(@RequestPart(value="content") BoardSaveDTO boardSaveDTO, @RequestPart(value="files") List<MultipartFile> multipartFiles){
+        boardService.save(boardSaveDTO, multipartFiles);
     }
     @DeleteMapping(value = "/delete/{boardId}")
     public void deleteBoard(@PathVariable int boardId){

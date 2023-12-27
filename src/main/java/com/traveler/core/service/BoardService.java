@@ -74,7 +74,7 @@ public class BoardService {
         return boardPlaceListResponseDTOs;
     }
 
-    public void save(BoardSaveDTO boardSaveDTO){
+    public void save(BoardSaveDTO boardSaveDTO,List<MultipartFile> multipartFiles){
         User user = userRepository.findById(boardSaveDTO.getUserId()).orElse(null);
         Board board = boardSaveDTO.toBoardEntity(user);
         List<PlaceRequestDTO> places = boardSaveDTO.getPlaces();
@@ -88,8 +88,9 @@ public class BoardService {
             boardPlaceRepository.save(boardPlace);
             boardPlaces.add(boardPlace);
             String fileName = board.getBoardId()+"_"+placeEntity.getPlaceId()+"_"+board.getRegDate().toLocalDate().toString();
+            int index = place.getImgIndex();
             try {
-                String imgUrl = s3Service.upload(place.getMultipartFile(),fileName);
+                String imgUrl = s3Service.upload(multipartFiles.get(index), fileName);
                 Image img = place.toImageEntity(imgUrl,boardPlace);
                 imageRepository.save(img);
                 boardPlace.setImage(img);
