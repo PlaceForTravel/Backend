@@ -18,11 +18,12 @@ public class BoardListResponseDTO {
     private String deletedDate;
     private String cityName;
     private List<String> imgUrl;
+    private boolean like;
 
 
 
 
-    public BoardListResponseDTO(Board entity){
+    public BoardListResponseDTO(Board entity, boolean like){
         this.boardId = entity.getBoardId();
         this.userId = entity.getUser().getUserId();
         this.likeCount = entity.getLikeCount();
@@ -37,5 +38,6 @@ public class BoardListResponseDTO {
             imageUrls.add(boardPlace.getImage().getFileName());
         }
         this.imgUrl = imageUrls;
+        this.like = like;
     }
 }

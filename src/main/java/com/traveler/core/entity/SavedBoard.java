@@ -41,4 +41,5 @@ public class SavedBoard {
         this.user = user;
         this.regDate = regDate;
     }
+
 }

@@ -6,7 +6,13 @@ import com.traveler.core.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+
+import java.util.Optional;
 
 public interface SavedBoardRepository extends JpaRepository<SavedBoard,Integer> {
     Page<SavedBoard> findAllByUser(User user, PageRequest pageRequest);
-}
+    Optional<SavedBoard> findByUserAndBoard(User user, Board board);
+    @Query("SELECT sb FROM SavedBoard sb JOIN Board b ON sb.board = b WHERE sb.user = :user AND b.deletedDate IS NULL")
+    Optional<SavedBoard> findByUserAndBoard_NotDeleted(User user, Board board);}

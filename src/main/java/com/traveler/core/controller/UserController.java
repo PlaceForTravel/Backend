@@ -2,6 +2,7 @@ package com.traveler.core.controller;
 
 import com.traveler.core.dto.BoardListResponseDTO;
 import com.traveler.core.dto.BoardPlaceListResponseDTO;
+import com.traveler.core.dto.UserDTO;
 import com.traveler.core.entity.User;
 import com.traveler.core.service.UserService;
 import org.springframework.data.domain.Page;
@@ -22,13 +23,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/savedBoard/list")
-    public Page<BoardListResponseDTO> savedBoardList(@RequestBody User user, @PageableDefault Pageable pageable){
-        Page<BoardListResponseDTO> boardListResponseDTOs=userService.savedBoardPaging(user.getUserId(), pageable);
+    public Page<BoardListResponseDTO> savedBoardList(@RequestBody UserDTO userDTO, @PageableDefault Pageable pageable){
+        Page<BoardListResponseDTO> boardListResponseDTOs=  userService.savedBoardPaging(userDTO.getUserId(), pageable);
         return boardListResponseDTOs;
     }
     @RequestMapping(value = "/savedBoardPlace/list")
-    public Page<BoardPlaceListResponseDTO> savedBoardPlaceList(@RequestBody User user, @PageableDefault Pageable pageable){
-        Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs=userService.savedBoardPlacePaging(user.getUserId(), pageable);
+    public Page<BoardPlaceListResponseDTO> savedBoardPlaceList(@RequestBody UserDTO userDTO, @PageableDefault Pageable pageable){
+        Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs=userService.savedBoardPlacePaging(userDTO.getUserId(), pageable);
         return boardPlaceListResponseDTOs;
     }
 }

@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<Board> findAllByCityName(String cityName, PageRequest pageRequest); // 페이지로 가져올려면 List가 아닌 Page로
+    Page<Board> findAllByDeletedDateIsNull(PageRequest pageRequest);
 
 }

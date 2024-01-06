@@ -26,25 +26,22 @@ import java.util.Optional;
 public class BoardController {
     private final BoardService boardService;
 
-
-
     public BoardController( BoardService boardService) {
         this.boardService = boardService;
     }
 
     @GetMapping(value = "/list")
-    public Page<BoardListResponseDTO> boardList(@PageableDefault(page = 1) Pageable pageable){
+    public Page<BoardListResponseDTO> boardList(@RequestBody UserDTO userDTO, @PageableDefault(page = 1) Pageable pageable){
 //        List<Board> optionalBoardList= Optional.ofNullable(boardRepository.findAll()).orElse(Collections.emptyList());
 //        List<BoardListResponseDTO> boardListResponseDTOList = optionalBoardList.stream().map(emp-> new BoardListResponseDTO(emp)).collect(Collectors.toList());
-
-            Page<BoardListResponseDTO> boardListResponseDTOs = boardService.placePaging(pageable);
+          Page<BoardListResponseDTO> boardListResponseDTOs = boardService.listPaging(pageable, userDTO.getUserId());
         return boardListResponseDTOs;
     }
-    @GetMapping(value = "/search/city/{cityName}")
-    public Page<BoardListResponseDTO> searchCityList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String cityName){
-        Page<BoardListResponseDTO> boardListResponseDTOs = boardService.placePaging(pageable,cityName);
-        return boardListResponseDTOs;
-    }
+//    @GetMapping(value = "/search/city/{cityName}")
+//    public Page<BoardListResponseDTO> searchCityList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String cityName){
+//        Page<BoardListResponseDTO> boardListResponseDTOs = boardService.placePaging(pageable,cityName);
+//        return boardListResponseDTOs;
+//    }
     @GetMapping(value = "/search/place/{placeName}")
     public Page<BoardPlaceListResponseDTO> searchPlaceList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String placeName){
         Page<BoardPlaceListResponseDTO> placeListResponseDTOs = boardService.boardPlacePaging(pageable,placeName);
@@ -66,8 +63,8 @@ public class BoardController {
     }
     @PostMapping(value = "/like/{boardId}")
     public void like(@PathVariable int boardId, @RequestBody UserDTO userDTO){
-        boardService.like(boardId, userDTO.getUserId());
-        boardService.likeNoti(boardId, userDTO);
+        if(boardService.like(boardId, userDTO.getUserId())){
+        boardService.likeNoti(boardId, userDTO);}
     }
     @PostMapping(value = "/saveBoardPlace/{boardPlaceId}")
     public void likeBoardPlace(@PathVariable int boardPlaceId, @RequestBody UserDTO userDTO){

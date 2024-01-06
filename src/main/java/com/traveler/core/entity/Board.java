@@ -106,7 +106,7 @@ public class Board {
     public void setContent(String content){
         this.content = content;
     }
-    public void setLikeCount(){
-        ++likeCount;
+    public void setLikeCount(int count){
+        likeCount = count;
     }
 }
