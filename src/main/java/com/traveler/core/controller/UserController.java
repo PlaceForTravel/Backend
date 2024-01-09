@@ -32,4 +32,14 @@ public class UserController {
         Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs=userService.savedBoardPlacePaging(userDTO.getUserId(), pageable);
         return boardPlaceListResponseDTOs;
     }
+
+    @RequestMapping(value = "/login")
+    public void join(@RequestBody User user){
+        userService.login(user);
+    }
+
+    @RequestMapping(value="/deleteFCMToken")
+    public void join(@RequestBody UserDTO userDTO){
+        userService.deleteToken(userDTO.getUserId());
+    }
 }

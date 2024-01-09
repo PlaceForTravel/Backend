@@ -42,12 +42,12 @@ public class BoardService {
         this.s3Service = s3Service;
     }
 
-    public Page<BoardListResponseDTO> listPaging(Pageable pageable, String UserId){
+    public Page<BoardListResponseDTO> listPaging(Pageable pageable, String userId){
         int page = pageable.getPageNumber()-1; // 현재페이지 반환
         int pagelimit = 5;
 
         Page<Board> boardPages = boardRepository.findAllByDeletedDateIsNull(PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
-        Optional<User> user = userRepository.findById(UserId);
+        Optional<User> user = userRepository.findById(userId);
         Page<BoardListResponseDTO> boardListResponseDTOs = boardPages.map(
                 (boardPage) -> {
                     if(savedBoardRepository.findByUserAndBoard_NotDeleted(user.get(),boardPage).isPresent()){
@@ -57,26 +57,31 @@ public class BoardService {
                 });
         return boardListResponseDTOs;
     }
-//    public Page<BoardListResponseDTO> placePaging(Pageable pageable,String cityName){
+//    public Page<BoardListResponseDTO> placePaging(Pageable pageable,String searchWord,String userId){
 //        int page = pageable.getPageNumber()-1; // 현재페이지 반환
 //        int pagelimit = 5;
-//        Page<Board> boardPages = boardRepository.findAllByCityName(cityName, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
-//
+//        Page<Board> boardPages = boardRepository.findAllBySearchWord(searchWord, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
+//        Optional<User> user = userRepository.findById(userId);
 //        Page<BoardListResponseDTO> boardListResponseDTOs = boardPages.map(
-//                boardPage -> new BoardListResponseDTO(boardPage));
+//                (boardPage) -> {
+//                    if(savedBoardRepository.findByUserAndBoard_NotDeleted(user.get(),boardPage).isPresent()){
+//                        return new BoardListResponseDTO(boardPage, true);
+//                    }
+//                    return new BoardListResponseDTO(boardPage, false);
+//                });
 //
 //        return boardListResponseDTOs;
 //    }
-    public Page<BoardPlaceListResponseDTO> boardPlacePaging(Pageable pageable, String placeName){
-        int page = pageable.getPageNumber()-1; // 현재페이지 반환
-        int pagelimit = 5;
-        Page<BoardPlace> boardPlacePages = boardPlaceRepository.findBoardPlaceByPlacePlaceName(placeName, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
-
-        Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs = boardPlacePages.map(
-                boardPlacePage -> new BoardPlaceListResponseDTO(boardPlacePage));
-
-        return boardPlaceListResponseDTOs;
-    }
+//    public Page<BoardPlaceListResponseDTO> boardPlacePaging(Pageable pageable, String placeName){
+//        int page = pageable.getPageNumber()-1; // 현재페이지 반환
+//        int pagelimit = 5;
+//        Page<BoardPlace> boardPlacePages = boardPlaceRepository.findBoardPlaceByPlacePlaceName(placeName, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
+//
+//        Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs = boardPlacePages.map(
+//                boardPlacePage -> new BoardPlaceListResponseDTO(boardPlacePage));
+//
+//        return boardPlaceListResponseDTOs;
+//    }
 
     public void save(BoardSaveDTO boardSaveDTO,List<MultipartFile> multipartFiles){
         User user = userRepository.findById(boardSaveDTO.getUserId()).orElse(null);

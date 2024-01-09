@@ -10,8 +10,6 @@ public class User {
     @Id
     @Column(name = "USER_ID")
     private String userId;
-    @Column(name = "PASSWORD")
-    private String password;
     @Column(name = "NICKNAME")
     private String nickname;
     @Column(name = "EMAIL")
@@ -41,12 +39,12 @@ public class User {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
     public String getNickname() {
         return nickname;
+    }
+    public void deleteFCMToken(){
+        fcmToken = null;
     }
 
     public String getEmail() {

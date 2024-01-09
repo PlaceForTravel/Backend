@@ -21,10 +21,15 @@ public class Place {
     private float longitude;
     @Column(name = "ADDRESS")
     private String address;
-    public Place(){}
+    @Column(name = "CATEGORY")
+    private String category;
 
     @OneToMany(mappedBy = "place")
     private List<BoardPlace> boardPlaceList = new ArrayList<>();
+
+    public Place() {
+
+    }
 
     public int getPlaceId() {
         return placeId;

@@ -37,16 +37,16 @@ public class BoardController {
           Page<BoardListResponseDTO> boardListResponseDTOs = boardService.listPaging(pageable, userDTO.getUserId());
         return boardListResponseDTOs;
     }
-//    @GetMapping(value = "/search/city/{cityName}")
-//    public Page<BoardListResponseDTO> searchCityList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String cityName){
-//        Page<BoardListResponseDTO> boardListResponseDTOs = boardService.placePaging(pageable,cityName);
+//    @GetMapping(value = "/search/city/{searchWord}")
+//    public Page<BoardListResponseDTO> searchCityList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String searchWord,@RequestBody UserDTO userDTO){
+//        Page<BoardListResponseDTO> boardListResponseDTOs = boardService.placePaging(pageable,searchWord, userDTO.getUserId());
 //        return boardListResponseDTOs;
 //    }
-    @GetMapping(value = "/search/place/{placeName}")
-    public Page<BoardPlaceListResponseDTO> searchPlaceList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String placeName){
-        Page<BoardPlaceListResponseDTO> placeListResponseDTOs = boardService.boardPlacePaging(pageable,placeName);
-        return placeListResponseDTOs;
-    }
+//    @GetMapping(value = "/search/place/{placeName}")
+//    public Page<BoardPlaceListResponseDTO> searchPlaceList(@PageableDefault(page = 1) Pageable pageable, @PathVariable String placeName){
+//        Page<BoardPlaceListResponseDTO> placeListResponseDTOs = boardService.boardPlacePaging(pageable,placeName);
+//        return placeListResponseDTOs;
+//    }
 
     @GetMapping(value = "/detail/{boardId}")
     public BoardDetailResponseDTO boardDetail(@PathVariable int boardId){

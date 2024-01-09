@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -34,7 +36,7 @@ public class UserService {
         Page<BoardListResponseDTO> boardListResponseDTOs = savedBoardPages.map(
                 savedBoardPage -> {
                     Board board = savedBoardPage.getBoard();
-                    return new BoardListResponseDTO(board);
+                    return new BoardListResponseDTO(board, true);
                 });
 
         return boardListResponseDTOs;
@@ -53,6 +55,17 @@ public class UserService {
                 });
 
         return boardPlaceListResponseDTOs;
+    }
+
+    public void login(User user){
+        userRepository.save(user);
+    }
+    public void deleteToken(String userId){
+        User user = userRepository.findById(userId).orElse(null);
+        if(user != null){
+            user.deleteFCMToken();
+            userRepository.save(user);
+        }
     }
 
 
