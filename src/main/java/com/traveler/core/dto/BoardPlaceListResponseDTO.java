@@ -21,6 +21,7 @@ public class BoardPlaceListResponseDTO {
     private String content;
 
     public BoardPlaceListResponseDTO(BoardPlace entity){
+        this.placeName = entity.getPlace().getPlaceName();
         this.boardId = entity.getBoard().getBoardId();
         this.likeCount = entity.getBoard().getLikeCount();
         this.userId = entity.getBoard().getUser().getUserId();

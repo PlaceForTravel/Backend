@@ -56,13 +56,16 @@ public class Place {
     }
 
     @Builder
-    public Place(String name, float longitude, float latitude, String address){
+    public Place(String name, float longitude, float latitude, String address, String category){
         this.placeName = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.category = category;
     }
 
 
-
+    public String getCategory() {
+        return category;
+    }
 }

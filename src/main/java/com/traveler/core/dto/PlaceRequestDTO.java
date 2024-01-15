@@ -16,7 +16,7 @@ public class PlaceRequestDTO {
     private float longitude;
     private String address;
     private int imgIndex;
-    private int boardPlaceid;
+    private String category;
 
 
 
@@ -27,16 +27,17 @@ public class PlaceRequestDTO {
     public PlaceRequestDTO(){}
 
 
-    public PlaceRequestDTO(String placeName, float latitude, float longitude, String address) {
+    public PlaceRequestDTO(String placeName, float latitude, float longitude, String address,String category) {
         this.placeName = placeName;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.category = category;
 
     }
 
     public Place toPlaceEntity(){
-        return Place.builder().address(address).name(placeName).longitude(longitude).latitude(latitude).build();
+        return Place.builder().address(address).name(placeName).longitude(longitude).latitude(latitude).category(category).build();
     }
 
     public Image toImageEntity(String imgUrl, BoardPlace boardPlace){

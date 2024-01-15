@@ -27,7 +27,7 @@ public class CommentController {
     }
 
     @GetMapping(value = "/board/{boardId}/comment")
-    public Page<CommentResponseDTO> boardList(@PageableDefault(page = 1) Pageable pageable, @PathVariable int boardId){
+    public Page<CommentResponseDTO> commentList(@PageableDefault(page = 1) Pageable pageable, @PathVariable int boardId){
         Page<CommentResponseDTO> commentResponseDTOList = commentService.paging(pageable, boardId);
         return commentResponseDTOList;
     }

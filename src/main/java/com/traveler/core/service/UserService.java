@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,11 +43,11 @@ public class UserService {
         return boardListResponseDTOs;
     }
 
-    public Page<BoardPlaceListResponseDTO> savedBoardPlacePaging(String userId, Pageable pageable){
+    public Page<BoardPlaceListResponseDTO> savedBoardPlacePaging(String userId, String cityName,Pageable pageable){
         int page = pageable.getPageNumber()-1; // 현재페이지 반환
         int pagelimit = 5;
         User user = userRepository.findById(userId).orElse(null);
-        Page<SavedBoardPlace> savedBoardPlacePages = savedBoardPlaceRepository.findAllByUser(user, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
+        Page<SavedBoardPlace> savedBoardPlacePages = savedBoardPlaceRepository.findAllByUserAndCityName(user,cityName, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC,"regDate")));
 
         Page<BoardPlaceListResponseDTO> boardPlaceListResponseDTOs = savedBoardPlacePages.map(
                 savedBoardPlacePage -> {
@@ -56,7 +57,13 @@ public class UserService {
 
         return boardPlaceListResponseDTOs;
     }
+    public List<String> savedBoardPlaceCity(String userId){
+        User user = userRepository.findById(userId).orElse(null);
+        List<String> cities = savedBoardPlaceRepository.findCityName(user);
 
+        return cities;
+
+    }
     public void login(User user){
         userRepository.save(user);
     }
@@ -67,6 +74,9 @@ public class UserService {
             userRepository.save(user);
         }
     }
-
+    public boolean isNicknameUnique(String nickname){
+        boolean notUnique = userRepository.existsUserByNickname(nickname);
+        return notUnique;
+    }
 
 }

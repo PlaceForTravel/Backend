@@ -31,10 +31,10 @@ public class BoardController {
     }
 
     @GetMapping(value = "/list")
-    public Page<BoardListResponseDTO> boardList(@RequestBody UserDTO userDTO, @PageableDefault(page = 1) Pageable pageable){
+    public Page<BoardListResponseDTO> boardList(@RequestParam String userId, @PageableDefault(page = 1) Pageable pageable){
 //        List<Board> optionalBoardList= Optional.ofNullable(boardRepository.findAll()).orElse(Collections.emptyList());
 //        List<BoardListResponseDTO> boardListResponseDTOList = optionalBoardList.stream().map(emp-> new BoardListResponseDTO(emp)).collect(Collectors.toList());
-          Page<BoardListResponseDTO> boardListResponseDTOs = boardService.listPaging(pageable, userDTO.getUserId());
+          Page<BoardListResponseDTO> boardListResponseDTOs = boardService.listPaging(pageable, userId);
         return boardListResponseDTOs;
     }
 //    @GetMapping(value = "/search/city/{searchWord}")
@@ -49,8 +49,8 @@ public class BoardController {
 //    }
 
     @GetMapping(value = "/detail/{boardId}")
-    public BoardDetailResponseDTO boardDetail(@PathVariable int boardId){
-        BoardDetailResponseDTO boardDetailResponseDTO = boardService.showBoardDetail(boardId);
+    public BoardDetailResponseDTO boardDetail(@RequestParam String userId, @PathVariable int boardId){
+        BoardDetailResponseDTO boardDetailResponseDTO = boardService.showBoardDetail(boardId,userId);
         return boardDetailResponseDTO;
     }
     @PostMapping(value = "/save")
@@ -64,7 +64,8 @@ public class BoardController {
     @PostMapping(value = "/like/{boardId}")
     public void like(@PathVariable int boardId, @RequestBody UserDTO userDTO){
         if(boardService.like(boardId, userDTO.getUserId())){
-        boardService.likeNoti(boardId, userDTO);}
+        boardService.likeNoti(boardId, userDTO);
+        }
     }
     @PostMapping(value = "/saveBoardPlace/{boardPlaceId}")
     public void likeBoardPlace(@PathVariable int boardPlaceId, @RequestBody UserDTO userDTO){

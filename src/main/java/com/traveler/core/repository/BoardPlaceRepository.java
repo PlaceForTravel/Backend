@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface BoardPlaceRepository extends JpaRepository<BoardPlace,Integer> {
     List<BoardPlace> findBoardPlacesByBoardBoardId(int boardId);
-    Page<BoardPlace> findBoardPlaceByPlacePlaceName(String placeName, PageRequest pageRequest);
+
 }

@@ -39,6 +39,7 @@ public class SavedBoard {
     public SavedBoard(Board board, User user, LocalDateTime regDate){
         this.board = board;
         this.user = user;
+
         this.regDate = regDate;
     }
 

@@ -17,6 +17,4 @@ public interface SavedBoardRepository extends JpaRepository<SavedBoard, Integer>
 
     Optional<SavedBoard> findByUserAndBoard(User user, Board board);
 
-    @Query("SELECT sb FROM SavedBoard sb WHERE sb.user = :user AND sb.board = :board AND sb.board.deletedDate IS NULL")
-    Optional<SavedBoard> findByUserAndBoard_NotDeleted(@Param("user") User user, @Param("board") Board board);
 }
