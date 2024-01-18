@@ -57,4 +57,10 @@ public class UserController {
         boolean notUnique = userService.isNicknameUnique(nickname);
         return notUnique;
     }
+
+    @RequestMapping(value = "/id")
+    public boolean checkId(@RequestParam String userId){
+        boolean notUnique = userService.isIdUnique(userId);
+        return notUnique;
+    }
 }

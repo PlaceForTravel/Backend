@@ -27,8 +27,8 @@ public class CommentController {
     }
 
     @GetMapping(value = "/board/{boardId}/comment")
-    public Page<CommentResponseDTO> commentList(@PageableDefault(page = 1) Pageable pageable, @PathVariable int boardId){
-        Page<CommentResponseDTO> commentResponseDTOList = commentService.paging(pageable, boardId);
+    public Page<CommentResponseDTO> commentList(@PageableDefault(page = 1) Pageable pageable, @PathVariable int boardId, @RequestParam String userId){
+        Page<CommentResponseDTO> commentResponseDTOList = commentService.paging(pageable, boardId, userId);
         return commentResponseDTOList;
     }
     @PostMapping(value = "/board/{boardId}/comment/save")
@@ -37,6 +37,6 @@ public class CommentController {
         commentService.commentNoti(boardId, commentRequestDTO);
     }
     @DeleteMapping(value = "/board/comment/delete/{commentId}")
-    public void deleteComment(@PathVariable int commentId){
-        commentService.deleteComment(commentId);}
+    public void deleteComment(@PathVariable int commentId, @RequestParam String userId){
+        commentService.deleteComment(commentId,userId);}
 }
