@@ -216,12 +216,13 @@ public class BoardService {
         Optional<Board> board = boardRepository.findById(boardId);
         Map<String, String> data = new HashMap<String, String>();
         data.put("boardId", Integer.toString(boardId));
+        if(userDTO.getUserId()!=board.get().getUser().getUserId()){
         FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
                 .body(userDTO.getUserId() + "님이 당신의 게시물을 좋아요 눌렀습니다.")
                 .title("좋아요")
                 .userId(board.get().getUser().getUserId())
                 .data(data)
                 .build();
-        fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);
+        fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);}
     }
 }

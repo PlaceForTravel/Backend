@@ -3,6 +3,7 @@ package com.traveler.core.dto;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.traveler.core.entity.BoardPlace;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -11,6 +12,8 @@ public class BoardPlaceListResponseDTO {
     private String placeName;
     private String cityname;
     private String address;
+    private float latitude;
+    private float longitude;
     private int likeCount;
     private String userId;
     private int boardId;
@@ -33,5 +36,7 @@ public class BoardPlaceListResponseDTO {
         this.modifiedDate = entity.getBoard().getModifiedDate();
         this.deletedDate = entity.getBoard().getDeletedDate();
         this.content = entity.getBoard().getContent();
+        this.latitude = entity.getPlace().getLatitude();
+        this.longitude = entity.getPlace().getLongitude();
     }
 }

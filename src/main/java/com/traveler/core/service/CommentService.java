@@ -40,14 +40,20 @@ public class CommentService {
         int pagelimit = 10;
 
         Page<Comment> commentPages = commentRepository.findCommentsByBoardBoardId(boardId, PageRequest.of(page, pagelimit, Sort.by(Sort.Direction.DESC, "regDate")));
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            Page<CommentResponseDTO> commentResponseDTOS = commentPages.map(
+                    commentPage -> {
+                        if (commentPage.getUser().getUserId().equals(userId)) {
+                            return new CommentResponseDTO(commentPage, true);
+                        } else return new CommentResponseDTO(commentPage, false);
+                    });
 
+            return commentResponseDTOS;
+        }
         Page<CommentResponseDTO> commentResponseDTOS = commentPages.map(
-                commentPage -> {
-                    if (commentPage.getUser().getUserId().equals(userId)) {
-                        return new CommentResponseDTO(commentPage, true);
-                    } else return new CommentResponseDTO(commentPage, false);
-                });
-
+                commentPage ->
+                        new CommentResponseDTO(commentPage, false));
         return commentResponseDTOS;
     }
 
@@ -62,7 +68,7 @@ public class CommentService {
 
     public void deleteComment(int commentId, String userId) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
-        if(comment.getUser().getUserId().equals(userId)){
+        if (comment.getUser().getUserId().equals(userId)) {
             commentRepository.delete(comment);
         } else {
             //오류 날리기
@@ -74,7 +80,7 @@ public class CommentService {
         Map<String, String> data = new HashMap<>();
         data.put("boardId", Integer.toString(boardId));
         FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
-                .body(commentRequestDTO.getUserId() + "님이 당신의 게시물에 댓글을 달았습니다.")
+                .body(commentRequestDTO.getNickname() + "님이 당신의 게시물에 댓글을 달았습니다.")
                 .title("댓글")
                 .userId(board.get().getUser().getUserId())
                 .data(data)

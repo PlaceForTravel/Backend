@@ -78,9 +78,12 @@ public class UserService {
         boolean notUnique = userRepository.existsUserByNickname(nickname);
         return notUnique;
     }
-    public boolean isIdUnique(String userId){
-        boolean notUnique = userRepository.existsUserByUserId(userId);
-        return notUnique;
+    public String isIdUnique(String userId){
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()){
+            return user.get().getNickname();
+        }
+        return null;
     }
 
 }
