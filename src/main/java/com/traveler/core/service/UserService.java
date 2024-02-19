@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +21,18 @@ public class UserService {
     private final BoardPlaceRepository boardPlaceRepository;
     private final BoardRepository boardRepository;
     private final SavedBoardPlaceRepository savedBoardPlaceRepository;
-
-    public UserService(UserRepository userRepository, BoardRepository boardRepository, SavedBoardRepository savedBoardRepository, BoardPlaceRepository boardPlaceRepository, BoardRepository boardRepository1, SavedBoardPlaceRepository savedBoardPlaceRepository) {
+    private final ImageRepository imageRepository;
+    private final CommentService commentService;
+    private final BoardService boardService;
+    public UserService(UserRepository userRepository, BoardRepository boardRepository, SavedBoardRepository savedBoardRepository, BoardPlaceRepository boardPlaceRepository, BoardRepository boardRepository1, SavedBoardPlaceRepository savedBoardPlaceRepository, ImageRepository imageRepository, CommentService commentService, BoardService boardService) {
         this.userRepository = userRepository;
         this.savedBoardRepository = savedBoardRepository;
         this.boardPlaceRepository = boardPlaceRepository;
         this.boardRepository = boardRepository;
         this.savedBoardPlaceRepository = savedBoardPlaceRepository;
+        this.imageRepository = imageRepository;
+        this.commentService = commentService;
+        this.boardService = boardService;
     }
 
     public Page<BoardListResponseDTO> savedBoardPaging(String userId, Pageable pageable){
@@ -84,6 +90,28 @@ public class UserService {
             return user.get().getNickname();
         }
         return null;
+    }
+    @Transactional
+    public void deleteUser(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            // 사용자가 존재하지 않을 때의 처리
+            return;
+        }
+        List<Board> boards = boardRepository.findAllByUser(user);
+        for (Board board : boards) {
+            List<BoardPlace> boardPlaces = boardPlaceRepository.findAllByBoard(board);
+            for (BoardPlace boardPlace : boardPlaces) {
+                imageRepository.deleteAllByBoardPlace(boardPlace);
+                boardPlaceRepository.delete(boardPlace);
+            }
+            commentService.deleteAllCommentByBoard(board);
+        } // map이 아닌 forEach를 사용해야함
+        commentService.deleteAllCommentByUser(user);
+        boardService.deleteAllBoard(user);
+        savedBoardPlaceRepository.deleteAllByUser(user);
+        savedBoardRepository.deleteAllByUser(user);
+        userRepository.delete(user);
     }
 
 }

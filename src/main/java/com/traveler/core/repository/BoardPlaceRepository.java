@@ -1,5 +1,6 @@
 package com.traveler.core.repository;
 
+import com.traveler.core.entity.Board;
 import com.traveler.core.entity.BoardPlace;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface BoardPlaceRepository extends JpaRepository<BoardPlace,Integer> {
     List<BoardPlace> findBoardPlacesByBoardBoardId(int boardId);
-
+    List<BoardPlace> findAllByBoard(Board board);
 }

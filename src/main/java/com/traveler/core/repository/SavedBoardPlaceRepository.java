@@ -1,5 +1,6 @@
 package com.traveler.core.repository;
 
+import com.traveler.core.entity.BoardPlace;
 import com.traveler.core.entity.SavedBoardPlace;
 import com.traveler.core.entity.User;
 import org.springframework.data.domain.Page;
@@ -17,4 +18,7 @@ public interface SavedBoardPlaceRepository extends JpaRepository<SavedBoardPlace
     @Query("SELECT DISTINCT sb.boardPlace.board.cityName FROM SavedBoardPlace sb WHERE sb.user = :user")
     List<String> findCityName(@Param("user") User user);
 
+    boolean existsByUserAndBoardPlace(User user, BoardPlace boardPlace);
+
+    void deleteAllByUser(User user);
 }

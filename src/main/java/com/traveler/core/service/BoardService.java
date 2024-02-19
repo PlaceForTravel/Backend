@@ -161,6 +161,9 @@ public class BoardService {
         board.setDeletedDate(LocalDateTime.now());
         boardRepository.save(board);
     }
+    public void deleteAllBoard(User user){
+        boardRepository.deleteAllByUser(user);
+    }
 
     public boolean like(int boardId, String userId) {
 
@@ -196,17 +199,25 @@ public class BoardService {
     public BoardDetailResponseDTO showBoardDetail(int boardId, String userId) {
         Board board = boardRepository.findById(boardId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
-        List<BoardPlace> boardPlace = boardPlaceRepository.findBoardPlacesByBoardBoardId(boardId);
-        if (board != null && boardPlace != null) {
+        List<BoardPlace> boardPlaces = boardPlaceRepository.findBoardPlacesByBoardBoardId(boardId);
+        if (board != null && boardPlaces != null) {
             if (user != null) {
+                List<PlaceResponseDTO> placeResponseDTOS = boardPlaces.stream().map(boardPlace -> {
+                    if(savedBoardPlaceRepository.existsByUserAndBoardPlace(user, boardPlace)){
+                    return new PlaceResponseDTO(boardPlace.getPlace(),boardPlace,true);}
+                    else return new PlaceResponseDTO(boardPlace.getPlace(),boardPlace,false);
+                }).collect(Collectors.toList());
                 if (savedBoardRepository.findByUserAndBoard(user, board).isPresent()) {
-                    BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, boardPlace, true);
+                    BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, placeResponseDTOS, true);
                     return boardDetailResponseDTO;
                 }
-                BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, boardPlace, false);
+                BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, placeResponseDTOS, false);
                 return boardDetailResponseDTO;
             } else {
-                BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, boardPlace, false);
+                List<PlaceResponseDTO> placeResponseDTOS = boardPlaces.stream().map(boardPlace ->
+                     new PlaceResponseDTO(boardPlace.getPlace(),boardPlace,false)
+                ).collect(Collectors.toList());
+                BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board, placeResponseDTOS, false);
                 return boardDetailResponseDTO;
             }
         } else return null;

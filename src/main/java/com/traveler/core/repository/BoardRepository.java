@@ -16,4 +16,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<Board> findAllByDeletedDateIsNull(PageRequest pageRequest);
 //    @Query("select b from Board b where ")
 //    Page<Board> findAllBySearchWord(String searchWord,PageRequest pageRequest);
+
+    void deleteAllByUser(User user);
+    List<Board> findAllByUser(User user);
 }

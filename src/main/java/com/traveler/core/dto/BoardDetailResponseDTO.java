@@ -21,7 +21,7 @@ public class BoardDetailResponseDTO {
     private List<PlaceResponseDTO> placeResponseDTOS;
     private boolean like;
 
-    public BoardDetailResponseDTO(Board board, List<BoardPlace> boardPlaces, boolean like){
+    public BoardDetailResponseDTO(Board board, List<PlaceResponseDTO> placeResponseDTOS, boolean boardLike){
         this.boardId = board.getBoardId();
         this.likeCount = board.getLikeCount();
         this.userId = board.getUser().getUserId();
@@ -31,7 +31,7 @@ public class BoardDetailResponseDTO {
         this.cityName = board.getCityName();
         this.deletedDate = board.getDeletedDate()==null ? null : board.getDeletedDate().toString();
         this.modifiedDate = board.getModifiedDate()==null ? null : board.getModifiedDate().toString();
-        this.placeResponseDTOS = boardPlaces.stream().map(boardPlace -> new PlaceResponseDTO(boardPlace.getPlace(),boardPlace)).collect(Collectors.toList());
-        this.like = like;
+        this.placeResponseDTOS = placeResponseDTOS;
+        this.like = boardLike;
     }
 }

@@ -16,5 +16,5 @@ public interface SavedBoardRepository extends JpaRepository<SavedBoard, Integer>
     Page<SavedBoard> findAllByUser(User user, PageRequest pageRequest);
 
     Optional<SavedBoard> findByUserAndBoard(User user, Board board);
-
+    void deleteAllByUser(User user);
 }

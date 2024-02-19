@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,7 +75,12 @@ public class CommentService {
             //오류 날리기
         }
     }
-
+    public void deleteAllCommentByUser(User user){
+        commentRepository.deleteAllByUser(user);
+    }
+    public void deleteAllCommentByBoard(Board board){
+        commentRepository.deleteAllByBoard(board);
+    }
     public void commentNoti(int boardId, CommentRequestDTO commentRequestDTO) {
         Optional<Board> board = boardRepository.findById(boardId);
         Map<String, String> data = new HashMap<>();

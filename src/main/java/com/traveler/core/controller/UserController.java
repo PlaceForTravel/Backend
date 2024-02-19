@@ -63,4 +63,9 @@ public class UserController {
         String userNickname = userService.isIdUnique(userId);
         return userNickname;
     }
+
+    @RequestMapping(value = "/delete")
+    public void deleteId(@RequestParam String userId){
+        userService.deleteUser(userId);
+    }
 }
