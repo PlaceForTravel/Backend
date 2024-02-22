@@ -4,6 +4,8 @@ import com.traveler.core.dto.BoardListResponseDTO;
 import com.traveler.core.dto.BoardPlaceListResponseDTO;
 import com.traveler.core.dto.SavedBoardPlaceRequestDTO;
 import com.traveler.core.dto.UserDTO;
+import com.traveler.core.entity.BoardPlace;
+import com.traveler.core.entity.Place;
 import com.traveler.core.entity.User;
 import com.traveler.core.service.UserService;
 import org.springframework.data.domain.Page;
@@ -37,9 +39,19 @@ public class UserController {
         return boardPlaceListResponseDTOs;
     }
     @RequestMapping(value = "/savedBoardPlace/city")
-    public List<String> savedBoardPlaceList(@RequestParam String userId){
+    public List<String> savedBoardPlaceCityList(@RequestParam String userId){
         List<String> cities = userService.savedBoardPlaceCity(userId);
         return cities;
+    }
+    @RequestMapping(value = "/savedPlace")
+    public List<Place> savedPlaceList(@RequestParam String userId){
+        List<Place> places = userService.savedPlace(userId);
+        return places;
+    }
+    @RequestMapping(value = "/savedBoardPlace")
+    public List<BoardPlaceListResponseDTO> savedBoardPlaceList(@RequestParam String userId,@RequestParam int placeId){
+        List<BoardPlaceListResponseDTO> boardPlaces = userService.savedBoardPlaceList(userId,placeId);
+        return boardPlaces;
     }
 
     @RequestMapping(value = "/login")

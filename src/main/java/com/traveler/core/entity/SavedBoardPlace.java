@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class SavedBoardPlace {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SAVEDBOARDPLACE_ID")
-    private int savedPlaceId;
+    private int savedBoardPlaceId;
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User user;
@@ -21,7 +21,7 @@ public class SavedBoardPlace {
 
 
     public int getSavedPlaceId() {
-        return savedPlaceId;
+        return savedBoardPlaceId;
     }
 
     public User getUser() {

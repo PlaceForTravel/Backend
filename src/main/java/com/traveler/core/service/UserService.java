@@ -11,8 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -69,6 +71,35 @@ public class UserService {
 
         return cities;
 
+    }
+    public List<Place> savedPlace(String userId){
+        List<Place> places = new ArrayList<>();
+        User user = userRepository.findById(userId).orElse(null);
+        if(user != null){
+            List<SavedBoardPlace> savedPlaceList = savedBoardPlaceRepository.findAllByUser(user);
+            for (SavedBoardPlace savedBoardPlace : savedPlaceList) {
+                places.add(savedBoardPlace.getBoardPlace().getPlace());
+            }
+            // 중복 제거
+            if (!places.isEmpty()) {
+                places = places.stream().distinct().collect(Collectors.toList());
+            }
+        }
+        return places;
+    }
+    public List<BoardPlaceListResponseDTO> savedBoardPlaceList(String userId, int placeId){
+        List<BoardPlaceListResponseDTO> boardPlaceListResponseDTOS = new ArrayList<>();
+        User user = userRepository.findById(userId).orElse(null);
+        if(user != null){
+            List<SavedBoardPlace> savedPlaceList = savedBoardPlaceRepository.findAllByUser(user);
+            for (SavedBoardPlace savedBoardPlace : savedPlaceList) {
+                BoardPlace boardPlace = savedBoardPlace.getBoardPlace();
+                if(placeId == boardPlace.getPlace().getPlaceId()){
+                    boardPlaceListResponseDTOS.add(new BoardPlaceListResponseDTO(boardPlace));
+                }
+            }
+        }
+        return boardPlaceListResponseDTOS;
     }
     public void login(User user){
         userRepository.save(user);

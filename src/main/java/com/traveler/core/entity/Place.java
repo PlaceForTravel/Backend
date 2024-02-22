@@ -1,5 +1,6 @@
 package com.traveler.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 import javax.persistence.*;
@@ -23,7 +24,7 @@ public class Place {
     private String address;
     @Column(name = "CATEGORY")
     private String category;
-
+    @JsonIgnore //순환참조를 막아주는
     @OneToMany(mappedBy = "place")
     private List<BoardPlace> boardPlaceList = new ArrayList<>();
 

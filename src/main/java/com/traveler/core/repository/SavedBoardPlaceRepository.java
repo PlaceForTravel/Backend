@@ -21,4 +21,6 @@ public interface SavedBoardPlaceRepository extends JpaRepository<SavedBoardPlace
     boolean existsByUserAndBoardPlace(User user, BoardPlace boardPlace);
 
     void deleteAllByUser(User user);
+
+    List<SavedBoardPlace> findAllByUser(User user);
 }
