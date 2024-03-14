@@ -102,7 +102,12 @@ public class UserService {
         return boardPlaceListResponseDTOS;
     }
     public void login(User user){
-        userRepository.save(user);
+        if(user.getUserId()==null||user.getNickname()==null||user.getNickname().equals("")||user.getUserId().equals("")){
+            throw new RuntimeException("userId나 nickname의 값이 null 입니다.");
+        }else{
+            userRepository.save(user);
+        }
+
     }
     public void deleteToken(String userId){
         User user = userRepository.findById(userId).orElse(null);
@@ -112,8 +117,11 @@ public class UserService {
         }
     }
     public boolean isNicknameUnique(String nickname){
-        boolean notUnique = userRepository.existsUserByNickname(nickname);
-        return notUnique;
+        if(nickname==null|| nickname.equals("")){
+            throw new IllegalArgumentException("null값이 들어왔습니다.");
+        }else {
+            return userRepository.existsUserByNickname(nickname);
+        }
     }
     public String isIdUnique(String userId){
         Optional<User> user = userRepository.findById(userId);

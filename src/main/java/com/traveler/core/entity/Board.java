@@ -4,6 +4,8 @@ import lombok.Builder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +93,7 @@ public class Board {
     @Builder
     public Board(String content, String cityName,User user){
         this.content = content;
-        this.regDate = LocalDateTime.now();
+        this.regDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         this.cityName = cityName;
         this.user = user;
     }

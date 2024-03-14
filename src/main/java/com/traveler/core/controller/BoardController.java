@@ -62,14 +62,14 @@ public class BoardController {
         boardService.delete(boardId);
     }
     @PostMapping(value = "/like/{boardId}")
-    public void like(@PathVariable int boardId, @RequestBody UserDTO userDTO){
-        if(boardService.like(boardId, userDTO.getUserId())){
-        boardService.likeNoti(boardId, userDTO);
+    public void like(@PathVariable int boardId, @RequestParam String userId){
+        if(boardService.like(boardId, userId)){
+        boardService.likeNoti(boardId, userId);
         }
     }
     @PostMapping(value = "/saveBoardPlace/{boardPlaceId}")
-    public void likeBoardPlace(@PathVariable int boardPlaceId, @RequestBody UserDTO userDTO){
-        boardService.likeBoardPlace(boardPlaceId, userDTO.getUserId());
+    public void likeBoardPlace(@PathVariable int boardPlaceId, @RequestParam String userId){
+        boardService.likeBoardPlace(boardPlaceId, userId);
     }
     @PutMapping(value = "/edit/{boardId}")
     public void editBoard(@PathVariable int boardId, @RequestBody BoardEditDTO boardEditDTO){

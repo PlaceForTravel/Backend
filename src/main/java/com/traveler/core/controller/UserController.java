@@ -2,9 +2,6 @@ package com.traveler.core.controller;
 
 import com.traveler.core.dto.BoardListResponseDTO;
 import com.traveler.core.dto.BoardPlaceListResponseDTO;
-import com.traveler.core.dto.SavedBoardPlaceRequestDTO;
-import com.traveler.core.dto.UserDTO;
-import com.traveler.core.entity.BoardPlace;
 import com.traveler.core.entity.Place;
 import com.traveler.core.entity.User;
 import com.traveler.core.service.UserService;
@@ -59,10 +56,6 @@ public class UserController {
         userService.login(user);
     }
 
-    @RequestMapping(value="/deleteFCMToken")
-    public void join(@RequestBody UserDTO userDTO){
-        userService.deleteToken(userDTO.getUserId());
-    }
 
     @RequestMapping(value = "/nickname")
     public boolean checkNickname(@RequestParam String nickname){

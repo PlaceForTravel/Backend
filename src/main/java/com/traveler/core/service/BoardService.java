@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,7 +116,13 @@ public class BoardService {
 //    }
 
     public void save(BoardSaveDTO boardSaveDTO, List<MultipartFile> multipartFiles) {
+        if(boardSaveDTO.getUserId().equals("")||boardSaveDTO.getUserId()==null){
+            throw new IllegalStateException("user가 없습니다.");
+        }
         User user = userRepository.findById(boardSaveDTO.getUserId()).orElse(null);
+        if(user==null){
+            throw new IllegalStateException("user가 존재하지 않습니다.");
+        }
         Board board = boardSaveDTO.toBoardEntity(user);
         List<PlaceRequestDTO> places = boardSaveDTO.getPlaces();
         List<BoardPlace> boardPlaces = new ArrayList<>();
@@ -145,12 +153,11 @@ public class BoardService {
     public void edit(int boardId, BoardEditDTO boardEditDTO) {
         Board board = boardRepository.findById(boardId).orElse(null);
         if (board.getUser().getUserId().equals(boardEditDTO.getUserId())) {
-
             board.setContent(boardEditDTO.getContent());
             board.setModifiedDate(LocalDateTime.now());
             boardRepository.save(board);
         } else {
-
+            throw new IllegalStateException("글을 작성한 유저가 아닙니다.");
             //오류 날리기
         }
 
@@ -169,7 +176,9 @@ public class BoardService {
 
         Board board = boardRepository.findById(boardId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
-
+        if (user == null || board == null) {
+            throw new IllegalStateException("비회원이거나 존재하지 않은 글입니다.");
+        }
         Optional<SavedBoard> savedBoard = savedBoardRepository.findByUserAndBoard(user, board);
         if (savedBoard.isPresent()) {
             board.setLikeCount(board.getLikeCount() - 1);
@@ -182,7 +191,7 @@ public class BoardService {
         board.setLikeCount(board.getLikeCount() + 1);
         boardRepository.save(board);
 
-        SavedBoard newSavedBoard = new SavedBoard(board, user, LocalDateTime.now());
+        SavedBoard newSavedBoard = new SavedBoard(board, user, ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
         savedBoardRepository.save(newSavedBoard);
         return true;
 
@@ -191,7 +200,7 @@ public class BoardService {
     public void likeBoardPlace(int boardPlaceId, String userId) {
         BoardPlace boardPlace = boardPlaceRepository.findById(boardPlaceId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
-        SavedBoardPlace savedBoardPlace = new SavedBoardPlace(user, boardPlace, LocalDateTime.now());
+        SavedBoardPlace savedBoardPlace = new SavedBoardPlace(user, boardPlace, ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
 
         savedBoardPlaceRepository.save(savedBoardPlace);
     }
@@ -223,15 +232,15 @@ public class BoardService {
         } else return null;
     }
 
-    public void likeNoti(int boardId, UserDTO userDTO) {
-        Optional<Board> board = boardRepository.findById(boardId);
+    public void likeNoti(int boardId, String userId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
         Map<String, String> data = new HashMap<String, String>();
         data.put("boardId", Integer.toString(boardId));
-        if(userDTO.getUserId()!=board.get().getUser().getUserId()){
+        if(board!=null && userId.equals(board.getUser().getUserId())){
         FCMNotificationRequestDTO fcmNotificationRequestDTO = FCMNotificationRequestDTO.builder()
-                .body(userDTO.getUserId() + "님이 당신의 게시물을 좋아요 눌렀습니다.")
+                .body(userId + "님이 당신의 게시물을 좋아요 눌렀습니다.")
                 .title("좋아요")
-                .userId(board.get().getUser().getUserId())
+                .userId(board.getUser().getUserId())
                 .data(data)
                 .build();
         fcmNotificationService.sendNotificationByToken(fcmNotificationRequestDTO);}

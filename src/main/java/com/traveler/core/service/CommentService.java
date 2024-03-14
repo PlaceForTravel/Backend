@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +64,7 @@ public class CommentService {
         Board board = boardRepository.findById(boardId).orElse(null);
         User user = userRepository.findById(commentRequestDTO.getUserId()).orElse(null);
 
-        Comment comment = new Comment(user, board, commentRequestDTO.getContent(), LocalDateTime.now());
+        Comment comment = new Comment(user, board, commentRequestDTO.getContent(), ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
         commentRepository.save(comment);
 
     }
